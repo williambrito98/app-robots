@@ -1,0 +1,8 @@
+{
+    "input_required": {
+        "inputFile": ["file", "local", "csv"],
+        "outPutFile": ["file", "local", "csv"],
+        "nameDigitalCerticate": ["text"],
+        "issuerDigitalCertificate": ["text"]   
+    }
+}   

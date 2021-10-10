@@ -1,11 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import { readdirSync } from 'fs'
+import { lstatSync, readdirSync, readFileSync } from 'fs'
 import { join } from 'path'
 
-
-
-// Expose protected methods that allow the renderer process to use
-// the ipcRenderer without exposing the entire object
 contextBridge.exposeInMainWorld('ipcRenderer', {
   send: (channel, data) => {
     // whitelist channels
@@ -25,6 +21,12 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
 
 contextBridge.exposeInMainWorld('robots', {
   getAll: () => {
-    return readdirSync(join(process.cwd(), 'robots'))
+    const pathRobots = join(process.cwd(), 'robots')
+    return readdirSync(pathRobots).filter(item => lstatSync(join(pathRobots, item)).isDirectory())
+  },
+  getLayout: (robot) => {
+    const pathLayoutRobot = join(process.cwd(), 'robots', robot, 'dist', 'config', 'layout.json')
+    const contentLayout = readFileSync(pathLayoutRobot)
+    return JSON.parse(contentLayout)
   }
 })

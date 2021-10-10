@@ -1,14 +1,28 @@
 import { ipcMain } from 'electron'
-import { Worker } from 'worker_threads'
 import { resolve } from 'path'
+import {RobotWorker} from  './worker/RobotWorker'
+import {} from 'fs'
 
 const process_worker = {}
+
 ipcMain.on('run', async (event, arg) => {
-    console.log(process.cwd())
-    const w = new Worker(resolve(process.cwd(),'robots', arg, 'dist', 'index.js'))
+    const pathFileIndexRobot = resolve(process.cwd(), 'robots', arg, 'dist', 'index.js')
+    const w = new RobotWorker(pathFileIndexRobot)
     process_worker[w.threadId] = w
-    event.reply('response', w.threadId)
+    event.reply('threadId', w.threadId)
 })
+
+
 ipcMain.on('kill', (event, arg) => {
     process_worker[arg].postMessage('close')
+})
+
+
+ipcMain.on('saveConfig', (event, args) => {
+    process.env.BROWSER_PATH = args
+    if (process.env.BROWSER_PATH === args)
+        event.reply('alertSucess', 'Dados Salvos com sucesso')
+    else
+        event.reply('alertDanger', 'Erro ao gravar os dados')
+
 })

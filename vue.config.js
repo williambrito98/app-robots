@@ -15,10 +15,6 @@ module.exports = {
           "from": "./node_modules/",
           "to": "node_modules"
         }]
-        // files: [
-        //   "node_modules/**/*"
-        // ],
-        //asar: false
       }
     },
   }
